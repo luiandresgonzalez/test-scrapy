@@ -12,8 +12,10 @@ class KlerosSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        page = response.url.split("/")[-2]
-        filename = f'kleros-{page}.html'
-        with open(filename, 'wb') as f:
-            f.write(response.body)
-        self.log(f'Saved file {filename}')
+        address = response.xpath('/html/body/div/div[6]/table').getall()
+    for a in address[1:]:
+       item = AddressJurados()
+       item['hol'] = product.xpath('td[1]//text()').extract_first()
+       item['first'] = product.xpath('td[2]//text()').extract_first()
+       item['last'] = product.xpath('td[3]//text()').extract_first()
+       yield item
